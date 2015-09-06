@@ -24,5 +24,6 @@ post "/secret_place/" do
 	json_params = JSON.parse(request.body.read.to_s)
 	HASH_SET[json_params['short']] = json_params["url"]
 	status 200
+	{"url" => "http://fierce-tundra-8657.herokuapp.com/"+json_params['short']}.to_json
 end
 
