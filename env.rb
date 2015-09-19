@@ -1,0 +1,1 @@
+ENV['serving_url'] = "localhost:9292/"

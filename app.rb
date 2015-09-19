@@ -1,11 +1,23 @@
+#!/usr/bin/env ruby
 require 'sinatra'
 require 'json'
 
 
-HASH_SET = {
-	"yhoo" => "http://www.yahoo.com",
-	"goog" => "http://www.google.com"
-}
+
+SERVING_URL = ENV['serving_url']
+PASS = ENV['PASS']
+HASH_SET = {}
+
+
+# get "/test_endpoint" do
+# 	counter = 0
+# 	while 1>0
+# 		HASH_SET["test"+counter.to_s] = "https://hq.appsflyer.com/id577586159/report#/2015-09-13/2015-09-20"
+# 		counter += 1
+# 		puts HASH_SET.length
+# 	end 
+# 	status 200
+# end
 
 get "/" do
 	content_type :json
@@ -20,10 +32,21 @@ get "/:addr" do
 	end
 end 
 
-post "/secret_place/" do
+post "/add/" do
 	json_params = JSON.parse(request.body.read.to_s)
-	HASH_SET[json_params['short']] = json_params["url"]
-	status 200
-	{"url" => "http://fierce-tundra-8657.herokuapp.com/"+json_params['short']}.to_json
+	if json_params['pwd'] != PASS
+		status 401
+	else
+		HASH_SET[json_params['short']] = json_params["url"]
+		puts json_params['short'] + " " + HASH_SET[json_params['short']] + " " + HASH_SET.length.to_s
+		response = {}
+		response['url'] = SERVING_URL + json_params['short']
+		response['redir'] = HASH_SET[json_params['short']]
+		response['size'] = HASH_SET.length
+		status 200
+		response.to_json	
+	end
+	
 end
+
 
